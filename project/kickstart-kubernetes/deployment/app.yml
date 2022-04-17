@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app
+spec:
+  selector:
+    matchLabels:
+      service: app
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        service: app
+    spec:
+      containers:
+        - name: main
+          image: sloopstash/app:v1
+          imagePullPolicy: Always
+          volumeMounts:
+            - name: supervisor-server
+              mountPath: /etc/supervisord.conf
+              subPath: supervisor-server
+            - name: app-supervisor
+              mountPath: /etc/supervisord.d/app.ini
+              subPath: app-supervisor
+            - name: app-source
+              mountPath: /opt/app
+          command:
+            - "/usr/bin/supervisord"
+            - "-c"
+            - "/etc/supervisord.conf"
+          ports:
+            - containerPort: 80
+      volumes:
+        - name: supervisor-server
+          hostpath:
+	    path: /opt/kickstart-docker/project/kickstart-kubernetes/supervisor/conf/main.conf
+	    type: File
+        - name: app-supervisor
+            hostpath:
+	    path: /opt/kickstart-docker/project/supervisor/conf/app.ini
+	    type: File
+        - name: app-source
+          hostPath:
+            path: /opt/kickstart-kubernetes/app
+            type: Directory

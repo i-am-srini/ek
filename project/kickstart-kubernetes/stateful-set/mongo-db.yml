@@ -1,0 +1,92 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: mongo-db
+spec:
+  selector:
+    matchLabels:
+      service: mongo-db
+  replicas: 1
+  serviceName: mongo-db
+  template:
+    metadata:
+      labels:
+        service: mongo-db
+    spec:
+      containers:
+        - name: main
+          image: sloopstash/mongo-db:v1
+          imagePullPolicy: IfNotPresent
+          volumeMounts:
+            - name: supervisor-server
+              mountPath: /etc/supervisord.conf
+              subPath: supervisor-server
+            - name: mongo-db-supervisor
+              mountPath: /etc/supervisord.d/mongo-db.ini
+              subPath: mongo-db-supervisor
+            - name: mongo-db-server
+              mountPath: /opt/redis/conf/mongo-db.conf
+              subPath: mongo-db-server
+            - name: mongo-db-data
+              mountPath: /opt/mongo-db/data
+            - name: mongo-db-log
+              mountPath: /opt/mongo-db/log
+          command:
+            - "/usr/bin/supervisord"
+            - "-c"
+            - "/etc/supervisord.conf"
+          ports:
+            - containerPort: 6379
+        - name: log
+          image: sloopstash/redis:v1
+          imagePullPolicy: IfNotPresent
+          volumeMounts:
+            - name: supervisor-server
+              mountPath: /etc/supervisord.conf
+              subPath: supervisor-server
+            - name: mongo-db-log
+              mountPath: /opt/mongo-db/log
+          command:
+            - "/usr/bin/supervisord"
+            - "-c"
+            - "/etc/supervisord.conf"
+      volumes:
+        - name: supervisor-server
+          hostpath:
+	    path: /opt/kickstart-docker/project/kickstart-kubernetes/supervisor/conf/main.conf
+	    type: File
+        - name: mongo-db-supervisor
+          hostpath:
+	    path: /opt/kickstart-docker/project/supervisor/conf/mongo-db.ini
+	    type: File
+        - name: redis-server
+            hostpath:
+	    path: /opt/kickstart-docker/project/mongo-db/conf/mongodb.conf
+	    type: File
+        - name: mongo-db-data
+          persistentVolumeClaim:
+            claimName: mongo-db-data
+        - name: mongo-db-log
+          persistentVolumeClaim:
+            claimName: mongo-db-log
+  volumeClaimTemplates:
+    - metadata:
+        name: mongo-db-data
+      spec:
+        storageClassName: mongo-db-data
+        volumeMode: Filesystem
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 2Gi
+    - metadata:
+        name: mongo-db-log
+      spec:
+        storageClassName: mongo-db-log
+        volumeMode: Filesystem
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 1Gi
