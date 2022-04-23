@@ -34,8 +34,8 @@ spec:
       volumes:
         - name: supervisor-server
           hostpath:
-	    path: /opt/kickstart-docker/project/kickstart-kubernetes/supervisor/conf/main.conf
-	    type: File
+            path: /opt/kickstart-docker/project/kickstart-kubernetes/supervisor/conf/main.conf
+            type: File
         - name: app-supervisor
           hostpath:
 	    path: /opt/kickstart-docker/project/supervisor/conf/app.ini
