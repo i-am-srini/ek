@@ -10,7 +10,7 @@ spec:
   accessModes:
     - ReadWriteOnce 
   persistentVolumeReclaimPolicy: Retain
-  local:
+  hostPath:
     path: /mnt/kubernetes/mongo-db/data
 ---
 apiVersion: v1
@@ -25,5 +25,5 @@ spec:
   accessModes:
     - ReadWriteOnce 
   persistentVolumeReclaimPolicy: Retain
-  local:
+  hostPath:
     path: /mnt/kubernetes/mongo-db/log
