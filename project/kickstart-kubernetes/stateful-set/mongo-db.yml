@@ -53,16 +53,16 @@ spec:
       volumes:
         - name: supervisor-server
           hostpath:
-	    path: /opt/kickstart-docker/project/kickstart-kubernetes/supervisor/conf/main.conf
-	    type: File
+            path: /opt/kickstart-docker/project/kickstart-kubernetes/supervisor/conf/main.conf
+            type: File
         - name: mongo-db-supervisor
           hostpath:
-	    path: /opt/kickstart-docker/project/supervisor/conf/mongo-db.ini
-	    type: File
+            path: /opt/kickstart-docker/project/supervisor/conf/mongo-db.ini
+            type: File
         - name: redis-server
-            hostpath:
-	    path: /opt/kickstart-docker/project/mongo-db/conf/mongodb.conf
-	    type: File
+          hostpath:
+            path: /opt/kickstart-docker/project/mongo-db/conf/mongodb.conf
+            type: File
         - name: mongo-db-data
           persistentVolumeClaim:
             claimName: mongo-db-data
