@@ -38,8 +38,8 @@ spec:
             type: File
         - name: app-supervisor
           hostpath:
-	    path: /opt/kickstart-docker/project/supervisor/conf/app.ini
-	    type: File
+            path: /opt/kickstart-docker/project/supervisor/conf/app.ini
+            type: File
         - name: app-source
           hostPath:
             path: /opt/kickstart-kubernetes/app
